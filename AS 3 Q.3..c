@@ -1,25 +1,32 @@
-//5 Check the given number is Armstrong number or not..
-//Input: n = 153
-//Output: Armstrong
+//3 Sum of numbers in given range.
+//Find sum of numbers from start to end.
+//Input: start = 1, end = 5
+//Output: 15
 
 #include<stdio.h>
 void main(){
-int n;
-printf("Enter n=");
-scanf("%d",&n);
-int a,sum=0;
-while(n>0){
-	a=n%10;
-	sum=sum+a*a*a;
-	n=n/10;
+
+int a;
+printf("start:");
+scanf("%d",&a);
+
+fflush(stdin);
+
+int b;
+printf("end:");
+scanf("%d",&b);
+int sum=0;
+
+while(a<=b){
+	sum=sum+a;
+	a++;
 	
 }
-if(n=sum){
-	printf("Armstrong");
+printf("%d",sum);
+
 }
-else{
-	printf("not armstrong");
 }
+
 
 
 }
