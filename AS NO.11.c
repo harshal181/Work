@@ -6,14 +6,9 @@
 //6. mystrupper
 //7. mystrlower
 //8. mystrrev
-//9. mystrstr
-//10. mystrcasecmp
-//11. mystrchr
-//12. mystrrchr
-//13. mystrncmp
-//14. mystrnstr
-//15. mystrncat
-//16. mystrncasecmp
+//9. mystrchr
+//10. mystrrchr
+
 #include<stdio.h>
 #include<string.h>
 void mystrcpy(char* ptr1,char* ptr2);
@@ -116,4 +111,5 @@ void mystrrchr(char* at1,char at2){
 	if(att!=NULL)
 	printf("\nthe character %c found at %id position",at2,att-at1+1);
 	
+
 }
