@@ -1,0 +1,95 @@
+FRN-16J0825/013
+set B
+
+
+ Q.1.Retrieve the names of all customers from the `Customers` table, sorted in alphabetical order.
+Ans:-select name from customer
+     order by name;
+
+Q.2. Fetch the top 10 most expensive products from the `Products` table. 
+Ans:-select product_name 
+    from products
+    order by price desc
+    limit 10;
+
+Q.3. Write a query to get the second-highest salary from the `Employees` table. 
+Ans:- Select salary from Employee
+      order by salary desc
+      limit 1,1;
+
+Q.4. Get the total count of customers from each city in the `Customers` table. 
+Ans:- select city ,count(*)
+     from customer
+    group by city;
+Q.5. Retrieve department-wise total salary from the `Employees` table but only include 
+departments where the total salary is greater than 2,00,000.
+Ans:- select depart_name,salary,count(*)
+      from department
+      where salary>2,00,000
+      group by department_name;
+
+Q.6. Extract only the last four characters of the `phone_number` column and first three characters 
+from `customerName` columns from the `Customers` table.
+Ans:- select phone_number,customer_name 
+      from customer
+      where phone_number like"%----" customer_name like'---%";
+
+ Q7. Write a query to retrieve products where the `product_name` contains "Pro". 
+Ans:-select product_name
+     from product
+     where product_name like '%Pro%';
+
+Q.8. Fetch the total number of students per course from the `Students` table, only for courses that 
+have at least 30 students enrolled. 
+Ans:- select course_name,count(*)
+      from student
+      group by course_name
+      having count(*)>=30;
+Q.9. Write an SQL query to find the number of orders placed in each month of the year. 
+Ans:-select month(order_date) AS order_month, count(*) as total_orders
+     from `order`
+      group by month(order_date)
+      order by(order_date);
+Q.10. Get the highest and lowest salary per department from the `Employees` table.
+Ans:-select max(salary),min (salary)
+     from Employees
+     group by did;
+
+Q.11. What does the following query return? 
+SELECT SUBSTRING('Database', 1, 4); 
+a) Data 
+b) tabase 
+c) DataB 
+d) Error
+Ans:-a.
+
+12. Which clause is used to sort the results in descending order? 
+a) ORDER BY DESC 
+b) ORDER BY ASC 
+c) SORT BY DESC 
+d) GROUP BY DESC
+Ans:-a.
+
+13. What is the default sorting order of `ORDER BY` if no direction (ASC/DESC) is specified? 
+a) ASC 
+b) DESC 
+c) No specific order 
+d) Error 
+14. What will be 
+Ans:-a.
+
+14. What will be the output of the following query? 
+SELECT ROUND(15.678, 2); 
+a) 15.67 
+b) 15.68 
+c) 15.7 
+d) 16
+Ans:-b.
+
+15. Which SQL function is used to count the number of rows in a table? 
+a) TOTAL() 
+b) COUNT() 
+c) SUM() 
+d) NUMBER() 
+Ans:-b.
+
