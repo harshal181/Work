@@ -1,0 +1,94 @@
+1. Write a SQL statement to insert
+Ans:-create table employees
+    -> (emp_id int,first_name varchar(20),last_name varchar(20),email varchar(20), phone_number varchar(20),hire_date date,job_id int,salary double,commision_pct double,manager_id int,department_id int);
+ insert into employees values
+    -> (101, 'Neena', 'Kochhar', 'NKOCHHAR', '515.123.4568', '1987-06-18', 2, 17000.00, 0.00, 200, 10),
+    -> (102, 'Lex', 'De Haan', 'LDEHAAN', '515.123.4569', '1987-06-19', 2, 17000.00, 0.00, 200, 10),
+    -> (103, 'Alexander', 'Hunold', 'AHUNOLD', '590.423.4567', '1987-06-20', 3, 9000.00, 0.00, 103, 60),
+    -> (104, 'Bruce', 'Ernst', 'BERNST', '590.423.4568', '1987-06-21', 3, 6000.00, 0.00, 103, 60),
+    -> (105, 'David', 'Austin', 'DAUSTIN', '590.423.4569', '1987-06-22', 3, 4800.00, 0.00, 103, 60),
+    -> (106, 'Valli', 'Pataballa', 'VPATABAL', '590.423.4560', '1987-06-23', 3, 4800.00, 0.00, 103, 60),
+    -> (107, 'Diana', 'Lorentz', 'DLORENTZ', '590.423.5567', '1987-06-24', 3, 4200.00, 0.00, 114, 30),
+    -> (108, 'Nancy', 'Greenberg', 'NGREENBE', '515.124.4569', '1987-06-25', 4, 12000.00, 0.00, 145, 80),
+    -> (109, 'Daniel', 'Faviet', 'DFAVIET', '515.124.4169', '1987-06-26', 4, 9000.00, 0.00, 145, 80);
+select * from employees;
++--------+------------+-----------+----------+--------------+------------+--------+--------+---------------+------------+---------------+
+| emp_id | first_name | last_name | email    | phone_number | hire_date  | job_id | salary | commision_pct | manager_id | department_id |
++--------+------------+-----------+----------+--------------+------------+--------+--------+---------------+------------+---------------+
+|    100 | Steven     | King      | SKING    | 515.123.4567 | 1987-06-17 |      1 |  24000 |             0 |        200 |            10 |
+|    101 | Neena      | Kochhar   | NKOCHHAR | 515.123.4568 | 1987-06-18 |      2 |  17000 |             0 |        200 |            10 |
+|    102 | Lex        | De Haan   | LDEHAAN  | 515.123.4569 | 1987-06-19 |      2 |  17000 |             0 |        200 |            10 |
+|    103 | Alexander  | Hunold    | AHUNOLD  | 590.423.4567 | 1987-06-20 |      3 |   9000 |             0 |        103 |            60 |
+|    104 | Bruce      | Ernst     | BERNST   | 590.423.4568 | 1987-06-21 |      3 |   6000 |             0 |        103 |            60 |
+|    105 | David      | Austin    | DAUSTIN  | 590.423.4569 | 1987-06-22 |      3 |   4800 |             0 |        103 |            60 |
+|    106 | Valli      | Pataballa | VPATABAL | 590.423.4560 | 1987-06-23 |      3 |   4800 |             0 |        103 |            60 |
+|    107 | Diana      | Lorentz   | DLORENTZ | 590.423.5567 | 1987-06-24 |      3 |   4200 |             0 |        114 |            30 |
+|    108 | Nancy      | Greenberg | NGREENBE | 515.124.4569 | 1987-06-25 |      4 |  12000 |             0 |        145 |            80 |
+|    109 | Daniel     | Faviet    | DFAVIET  | 515.124.4169 | 1987-06-26 |      4 |   9000 |             0 |        145 |            80 |
++--------+------------+-----------+----------+--------------+------------+--------+--------+---------------+------------+---------------+
+
+Department :
+ Ans:-create table department
+    -> (dept_id int,dept_name varchar(20),manager_id int,location_id int);
+
+mysql> insert into department values
+    -> (10,'administration',200,1700),
+    -> (20,'marketing',201,1800),
+    -> (30,'purchasing',114,1700),
+    -> (40,'human resources',203,2400),
+    -> (50,'shipping',121,1500),
+    -> (60,'it',103,1400),
+    -> (70,'public relations',204,2700),
+    -> (80,'sales',145,2500);
++---------+------------------+------------+-------------+
+| dept_id | dept_name        | manager_id | location_id |
++---------+------------------+------------+-------------+
+|      10 | administration   |        200 |        1700 |
+|      20 | marketing        |        201 |        1800 |
+|      30 | purchasing       |        114 |        1700 |
+|      40 | human resources  |        203 |        2400 |
+|      50 | shipping         |        121 |        1500 |
+|      60 | it               |        103 |        1400 |
+|      70 | public relations |        204 |        2700 |
+|      80 | sales            |        145 |        2500 |
++---------+------------------+------------+-------------+
+2. Write a SQL statement to insert 3 rows by a single insert statement.
+Ans:-insert into employees (emp_id,first_name,email)
+    -> values(110,"amay","ama@gmail.com"),
+    -> (11,"abhi","abh11@gmail.com"),
+    -> (112,"avi","av112@gmail.com");
+3. Write a SQL statement to insert one row in jobs table to ensure that no duplicate
+value will be entered in the job_id column.
+ Ans:-create table jobs
+    -> (job_id varchar(20) unique,job_title varchar(50),salary int,max_salary int);
+
+mysql> insert into jobs values
+    -> ('AD_PRES', 'President', 20000, 40000),
+    -> ('AD_VP', 'Administration Vice President', 15000, 30000),
+    -> ('AD_ASST', 'Administration Assistant', 3000, 6000),
+    -> ('FI_MGR', 'Finance Manager', 8200, 16000),
+    -> ('FI_ACCOUNT', 'Accountant', 4200, 9000),
+    -> ('AC_MGR', 'Accounting Manager', 8200, 16000),
+    -> ('AC_ACCOUNT', 'Public Accountant', 4200, 9000),
+    -> ('SA_MAN', 'Sales Manager', 10000, 20000);
+
+4. Write SQL statement to increment salary of each emp by 10%.
+Ans:-update employees
+    -> set salary=salary*1.10;
+5. Write a SQL statement to change the email column of employees table with 'not
+available' for those employees whose department_id is 80 and gets a
+commission is less than .20%
+Ans:-update employees
+    -> set email='not available'
+    -> where department_id=80 and commision_pct<0.20;
+
+6. Write a SQL statement to change the email column of employees table with 'not
+available' for those employees who belongs to the 'Purchasing' department.
+Ans:- update employees
+    -> set email="not available"
+    -> where department_id =(select department_id from department where department_name='purchasing');
+7. Write a SQL statement to change the email and commission_pct column of
+employees table with 'not available' and 0.10 for all employees.
+Ans:- update employees
+    -> set email="not available",
+    -> commision_pct=0.10;
