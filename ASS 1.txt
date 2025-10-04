@@ -1,0 +1,40 @@
+Question.Hotel Management
+-------------------------
+
+Room Booking
+- Customers would be booking the rooms with online
+portal. They are required to register themselves with
+email id prior to book the rooms
+- Rooms would be having different type (Basic, Luxury)
+and have specific rent.
+
+Service management
+- Customers would be availing the services like food,
+laundry, site visits
+- Food services would be charged based upon selection
+of food from menu.
+- laundry services would be charged as Rs20/cloth
+- Site visits would offer specific rates on the basis of per
+day charges and selection of vehicle
+Invoice management
+- Invoice generation
+
+
+Answer:- create table customer
+    -> (name varchar(20),phone_no int,customer_id int,email varchar(20),address varchar(20));
+ create table room
+    -> (room_id int,address varchar(20),rent int,room_type varchar(20));
+(booking_id int,room_id int,email varchar(20));
+Query OK, 0 rows affected (0.07 sec)
+
+
+
+
+ create table food_service
+    -> (food_name varchar(20),service_id int,total_charges int);
+ create table laundry_services
+    -> (laundray_id int,service_id int,cloth_type varchar(20),total_charges int);
+ create table vehicle_service
+    -> (vehicle_id int,service_id int,vehicle_type varchar(20),perdayof_charges int,total_cost int);
+ create table invoice
+    -> (invoice_id int,customer_id int,service_id int,room_id int,food_charges int,cloth_charges int,vehicle_charges int,generated_date date);
