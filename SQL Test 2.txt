@@ -1,0 +1,79 @@
+Nama:-Harshal Kailash Shamshettiwar
+
+FRN-16J0825/013
+
+set D
+
+1. Write a SQL statement to display specific columns movie and genre for all the movies
+Ans:-select mname,genre
+   from movie;
+
+2. Write a query which will retrieve the information of all actors who has ‘khan’ in their name
+Ans:-select * from actor
+      where name like "%khan%";
+
+3. Write a SQL statement to display all the information for those movies which were released
+in 20th century.
+Ans:-select * from movie
+     where year(release_date) between 1901 and 2000;
+
+4. Write a SQL statement to find the average rating for movies.
+Ans:-select avg(IMDB_rating)
+     from movie;
+
+5. Write a SQL query to arrange the actors in ascending order of their award count.
+  Ans:-select * from actor
+       order by no_of_awards;
+
+6. Write a SQL statement find the number of movies in which each actor has worked.
+Ans:-select a.name,count(m.mid)
+     from actor a
+     join movie_Actor ma
+     on a.act_id=ma.a_id
+    join movie m 
+    on ma.m_id=m.m_id
+   group by a.name;
+
+
+
+7. Write a query to find names of the actor along with the movie name they have worked in.
+Ans:-select distinct a.name,m.mname
+    from actor a
+     join movie_actor ma
+     on a.act_id=ma.a_id
+     join movie m
+     on ma.m_id=m.m_id
+
+
+
+
+8. Write a SQL statement to name of the movie in which a non Indian actor has worked.
+Ans:-select m.mname
+from movie m
+join movie_actor ma
+on m.m_id=ma.m_id
+join actor a
+on ma.a_id=a.act_id
+where a.nationality!="Indian";
+
+9. Write a query to display names of all movies in which ‘Salman khan’ has worked.
+Ans:-select  mname 
+     from movie m
+     left join movie_actor ma
+     on m.m_id=ma.m_id
+     left join actor a
+     on ma.a_id=a.act_id
+     where a.name="Salman Khan";
+
+10. Write a query to find names of actors who worked in movie with genre ‘comedy’.
+Ans:-select distinct a.name
+     from actor a
+     join movie_actor ma
+     on a.act_id=ma.a_id
+     join movie m
+     on ma.m_id=m.m_id
+     where m.genre="comedy";
+
+
+
+
