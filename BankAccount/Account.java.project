@@ -1,0 +1,467 @@
+import java.util.*;
+import java.util.Date;
+import java.time.LocalDate;
+
+
+
+// ==========================================================
+// BASE ACCOUNT
+// ==========================================================
+abstract class Account {
+    String accountNumber;
+    String holderName;
+    double balance;
+    String Status;
+    Date openDate = new Date();
+    boolean frozen = false;
+
+    ArrayList<Transaction> history = new ArrayList<>();
+
+    public Account(String accountNumber, String holderName, double balance, String Status) {
+        this.accountNumber = accountNumber;
+        this.holderName = holderName;
+        this.balance = balance;
+        this.Status = Status;
+    }
+
+    public void addTransaction(String transactionId, String type, double amount, double prevBalance, double balance, Date date) {
+        history.add(new Transaction(transactionId, type, amount, prevBalance, balance, date));
+    }
+
+    public abstract boolean deposit(double amount);
+    public abstract boolean withdraw(double amount);
+    public abstract double calculateInterest();
+
+    double getbalance() {
+        return this.balance;
+    }
+
+    List<Transaction> getTransaction() {
+        return history;
+    }
+
+    void Display() {
+        System.out.println("Account Number=" + this.accountNumber);
+        System.out.println("Holder Name=" + this.holderName);
+        System.out.println("Balance=" + this.balance);
+        System.out.println("Status=" + this.Status);
+        System.out.println();
+    }
+}
+
+// ==========================================================
+// SAVING ACCOUNT
+// ==========================================================
+class SavingAccount extends Account {
+    static final double minimumBalance = 10000;
+
+    SavingAccount(String accountNumber, String holderName, double balance, String Status) {
+        super(accountNumber, holderName, balance, Status);
+    }
+
+    public boolean deposit(double amount) {
+        if (frozen) return false;
+        double prev = balance;
+        balance += amount;
+        addTransaction("TX101", "Deposit", amount, prev, balance, new Date());
+        return true;
+    }
+
+    public boolean withdraw(double amount) {
+        if (frozen) return false;
+        if (balance - amount < minimumBalance) return false;
+        double prev = balance;
+        balance -= amount;
+        addTransaction("TX202", "Withdraw", amount, prev, balance, new Date());
+        return true;
+    }
+
+    public double calculateInterest() {
+        return balance * 0.04;
+    }
+}
+
+// ==========================================================
+// SALARY ACCOUNT
+// ==========================================================
+class SalaryAccount extends Account {
+    LocalDate lastTransactionDate = null;
+
+    SalaryAccount(String accountNumber, String holderName, double balance, String Status) {
+        super(accountNumber, holderName, balance, Status);
+    }
+
+    private boolean isLastTxnOlderThan2Months() {
+        if (lastTransactionDate == null) return false;
+        LocalDate twoMonthsAgo = LocalDate.now().minusMonths(2);
+        return lastTransactionDate.isBefore(twoMonthsAgo);
+    }
+
+    public boolean deposit(double amount) {
+        if (frozen) return false;
+        if (isLastTxnOlderThan2Months()) {
+            System.out.println("Deposit not allowed: Last transaction older than 2 months.");
+            return false;
+        }
+        double prev = balance;
+        balance += amount;
+        addTransaction("TX301", "Deposit", amount, prev, balance, new Date());
+        lastTransactionDate = LocalDate.now();
+        return true;
+    }
+
+    public boolean withdraw(double amount) {
+        if (frozen) return false;
+        if (isLastTxnOlderThan2Months()) {
+            System.out.println("Withdraw not allowed: Last transaction older than 2 months.");
+            return false;
+        }
+        if (balance < amount) return false;
+        double prev = balance;
+        balance -= amount;
+        addTransaction("TX302", "Withdraw", amount, prev, balance, new Date());
+        lastTransactionDate = LocalDate.now();
+        return true;
+    }
+
+    public double calculateInterest() {
+        return balance * 0.02;
+    }
+}
+
+// ==========================================================
+// LOAN ACCOUNT
+// ==========================================================
+class LoanAccount extends Account {
+    double loanAmount;
+    double interestRate;
+    boolean loanClosed = false;
+    int cibilScore;
+
+    LoanAccount(String accountNumber, String holderName, double balance, String status,
+                double loanAmount, double interestRate, int cibilScore) {
+        super(accountNumber, holderName, balance,"pending");
+        this.loanAmount = loanAmount;
+        this.interestRate = interestRate;
+        this.cibilScore = cibilScore;
+
+        if (cibilScore < 650) {
+            this.Status = "Rejected";
+            this.loanClosed = true;
+        } else {
+            this.Status = "Active";
+            this.balance = -loanAmount;
+        }
+    }
+
+    public boolean deposit(double amount) {
+        if (frozen || loanClosed) return false;
+        double prev = balance;
+        loanAmount -= amount;
+        balance = -loanAmount;
+        addTransaction("TX208", "LoanPayment", amount, prev, balance, new Date());
+        if (loanAmount <= 0) {
+            loanClosed = true;
+            loanAmount = 0;
+            balance = 0;
+        }
+        return true;
+    }
+
+    public boolean withdraw(double amount) { return false; }
+
+    public double calculateInterest() {
+        return loanAmount * (interestRate / 100);
+    }
+}
+
+// ==========================================================
+// CURRENT ACCOUNT
+// ==========================================================
+class CurrentAccount extends Account {
+    double overdraftLimit;
+    double overdraftUsed;
+
+    CurrentAccount(String accountNumber, String holderName, double balance, String status, double overdraftLimit) {
+        super(accountNumber, holderName, balance, status);
+        this.overdraftLimit = overdraftLimit;
+        this.overdraftUsed = 0;
+    }
+
+    public boolean deposit(double amount) {
+        if (frozen) return false;
+        double prev = balance;
+        if (overdraftUsed > 0) {
+            overdraftUsed -= amount;
+            if (overdraftUsed < 0) {
+                balance += (-overdraftUsed);
+                overdraftUsed = 0;
+            }
+        } else {
+            balance += amount;
+        }
+        addTransaction("TX309881", "Deposit", amount, prev, balance, new Date());
+        return true;
+    }
+
+    public boolean withdraw(double amount) {
+        if (frozen) return false;
+        double prev = balance;
+        double originalAmount = amount;
+        double remainingOD = overdraftLimit - overdraftUsed;
+
+        if (balance + remainingOD < amount) return false;
+        if (balance >= amount) {
+            balance -= amount;
+        } else {
+            amount -= balance;
+            balance = 0;
+            overdraftUsed += amount;
+        }
+        addTransaction("TXC202", "Withdraw", originalAmount, prev, balance, new Date());
+        return true;
+    }
+
+    public double calculateInterest() { return 0; }
+}
+// ==========================================================
+// TRANSACTION
+// ==========================================================
+class Transaction {
+    String transactionId;
+    String type;
+    double prevBalance;
+    double balance;
+    double amount;
+    Date date;
+
+    public Transaction(String transactionId, String type, double amount, double prevBalance, double balance, Date date) {
+        this.transactionId = transactionId;
+        this.type = type;
+        this.amount = amount;
+        this.prevBalance = prevBalance;
+        this.balance = balance;
+        this.date = date;
+    }
+
+    void display() {
+        System.out.println("Transaction id=" + this.transactionId);
+        System.out.println("Type=" + this.type);
+        System.out.println("Amount=" + this.amount);
+        System.out.println("Previous Balance=" + this.prevBalance);
+        System.out.println("Balance After Transaction=" + this.balance);
+        System.out.println("Date=" + this.date);
+        System.out.println();
+    }
+}
+
+// ==========================================================
+// BANK CONTROLLER
+// ==========================================================
+class BankController {
+    BankView b1 = new BankView();
+    Scanner obj1 = new Scanner(System.in);
+
+    BankController() { b1.hardcodeddate(); }
+
+    void showmenu() {
+        while (true) {
+            System.out.println("Bank Menu:-");
+            System.out.println("Press 1.Create Account");
+            System.out.println("Press 2.Delete Account:");
+            System.out.println("press 3.Withdraw money");
+            System.out.println("press 4.Freeze Account");
+            System.out.println("press 5.Search Account");
+            System.out.println("press 6.Display Account");
+            System.out.println("Press 7.Deposite  Money");
+            System.out.println("Press 8.Exit");
+            System.out.println("Enter choice:");
+
+            int ch = obj1.nextInt();
+            obj1.nextLine(); // fix nextLine issue
+
+            if (ch == 1) createAccount();
+            if (ch == 2) deleteAccount();
+            if (ch == 3) withdrawmoney();
+            if (ch == 4) freeezeAccount();
+            if (ch == 5) searchAccount();
+            if (ch == 6) displayAccount();
+            if(ch == 7) depositemoney();
+            if (ch == 8) return;
+        }
+    }
+
+    void createAccount() {
+        System.out.println("Press 2.Saving Account");
+        System.out.println("Press 3.Salary Account");
+        System.out.println("Press 4.Loan Account");
+        System.out.println("Press 5.Current Account");
+        System.out.println("Enter the choice:");
+        int c = obj1.nextInt();
+        obj1.nextLine();
+
+        if (c < 2 || c > 5) {
+            System.out.println("Invalid Account Type!");
+            return;
+        }
+
+        System.out.println("Enter account number:");
+        String acc = obj1.nextLine();
+
+        System.out.println("Enter name:");
+        String name = obj1.nextLine();
+
+        System.out.println("Enter Opening Balance:");
+        double bal = obj1.nextDouble();
+        obj1.nextLine();
+
+        Account a = null;
+
+        if (c == 2) a = new SavingAccount(acc, name, bal, "Active");
+        if (c == 3) a = new SalaryAccount(acc, name, bal, "Active");
+
+        if (c == 4) {
+            System.out.println("Enter Loan Amount");
+            double t = obj1.nextDouble();
+            System.out.println("Enter Interest Rate");
+            double rate = obj1.nextDouble();
+            System.out.println("Enter Cibil Score:");
+            int Cb = obj1.nextInt();
+            obj1.nextLine();
+            a = new LoanAccount(acc, name, 0, "Active", t, rate, Cb);
+        }
+
+        if (c == 5) {
+            System.out.println("Overdraft Limit:");
+            double limit = obj1.nextDouble();
+            obj1.nextLine();
+            a = new CurrentAccount(acc, name, bal, "Active", limit);
+        }
+
+        a.addTransaction("TXOPEN", "OpeningBalance", bal, 0, bal, new Date());
+        b1.accounts.add(a);
+        System.out.println("Account Created Successfully!");
+    }
+
+    void deleteAccount() {
+        System.out.println("Enter Account Number:");
+        String acc = obj1.nextLine();
+        Account a = b1.searchByAccountNumber(acc);
+        if (a == null) b1.showAccountNotFound();
+        else {
+            b1.accounts.remove(a);
+            b1.showmessanger("Account Deleted");
+        }
+    }
+
+    void withdrawmoney() {
+        System.out.println("Enter Account number:");
+        String acc = obj1.nextLine();
+        Account a = b1.searchByAccountNumber(acc);
+        if (a == null) {
+            b1.showAccountNotFound();
+            return;
+        }
+        System.out.println("Enter amount");
+        double amt = obj1.nextDouble();
+        obj1.nextLine();
+        if (a.withdraw(amt)) System.out.println("Amount Withdrawn!");
+        else System.out.println("Withdraw failed!");
+    }
+
+    void freeezeAccount() {
+        System.out.println("Enter Account Number:");
+        String acc = obj1.nextLine();
+        Account a = b1.searchByAccountNumber(acc);
+        if (a == null) { b1.showAccountNotFound(); return; }
+        if (a.frozen) { System.out.println("Account already frozen"); return; }
+        a.frozen = true;
+        System.out.println("Account freeze Successfully!");
+    }
+
+    void searchAccount() {
+        System.out.println("Enter Account Number:");
+        String acc = obj1.nextLine();
+        Account a = b1.searchByAccountNumber(acc);
+        if (a == null) { b1.showAccountNotFound(); return; }
+        System.out.println("Account Found!");
+        a.Display();
+    }
+
+    void displayAccount() {
+        for (Account a : b1.accounts) {
+            a.Display();
+            System.out.println("Transaction History:");
+            if (a.getTransaction().isEmpty()) System.out.println("No transactions found.");
+            else for (Transaction t : a.getTransaction()) t.display();
+            System.out.println("-------------------------");
+        }
+    }
+
+    void depositemoney() {
+        System.out.println("Enter Account Number");
+        String acc = obj1.nextLine();
+        Account a = b1.searchByAccountNumber(acc);
+        if(a==null) System.out.println("not found");
+        else {
+            System.out.println("Enter amount:");
+            double amount = obj1.nextDouble();
+            obj1.nextLine();
+            if(a.deposit(amount)) b1.showmessanger("Amount deposited!");
+        }
+    }
+}
+
+
+
+// ==========================================================
+// BANK VIEW
+// ==========================================================
+class BankView {
+    ArrayList<Account> accounts = new ArrayList<>();
+
+    public void hardcodeddate() {
+        accounts.add(new SavingAccount("101", "Amay Gupta", 50000, "Active"));
+        accounts.add(new SalaryAccount("102", "Akshay", 20000, "Active"));
+        accounts.add(new LoanAccount("103", "Abhijit", 0, "Active", 80000, 10.0, 720));
+        accounts.add(new CurrentAccount("104", "Mira", 10000, "Active", 20000));
+    }
+
+    public Account searchByAccountNumber(String accountNumber) {
+        for (Account a : accounts) {
+            if (a.accountNumber.equals(accountNumber)) return a;
+        }
+        return null;
+    }
+
+    public void showmessanger(String msg) { System.out.println(msg); }
+
+    public void showAccountNotFound() { System.out.println("Account Not Found!");
+}
+    
+public void showBalance(String accountNumber){
+Account a=searchByAccountNumber(accountNumber);
+if(a!=null){
+System.out.println("Balance="+a.balance);
+}
+}
+
+
+
+}
+
+// ==========================================================
+// TEST
+// ==========================================================
+class Test {
+    public static void main(String[] args) {
+        BankController bb1 = new BankController();
+
+        SalaryAccount sa = new SalaryAccount("1008","Abhay Gupta",8000,"Active");
+        sa.lastTransactionDate = LocalDate.now().minusMonths(3);
+
+        bb1.b1.accounts.add(sa);
+ 
+        bb1.showmenu();
+    }
+}
